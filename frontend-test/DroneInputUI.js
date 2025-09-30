@@ -75,7 +75,7 @@ export function renderDroneInputUI(containerId = 'inputContent') {
     window.clearCalculatedBuffers?.();
 
     try {
-      const res = await fetch('https://digitooltest-backend.onrender.com/api/grb/run', {
+      const res = await fetch('https://digitool-backend.onrender.com/api/grb/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fg, params: input })

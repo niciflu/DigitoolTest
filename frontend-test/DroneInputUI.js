@@ -83,12 +83,23 @@ export function renderDroneInputUI(containerId = 'inputContent') {
         body: JSON.stringify({ fg, params: input })
       });
 
+      // --- robust response handling ---
+      const ct = res.headers.get('content-type') || '';
+
       if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(`Backend error (${res.status}): ${txt}`);
+        // Try to read text to show a clear error
+        const errText = await res.text().catch(() => '');
+        throw new Error(`Backend error ${res.status} ${res.statusText}: ${errText || '(no body)'}`);
+      }
+
+      if (!ct.includes('application/json')) {
+        const txt = await res.text().catch(() => '');
+        throw new Error(`Expected JSON but got "${ct}" with status ${res.status}. Body: ${txt.slice(0, 400)}`);
       }
 
       const data = await res.json();
+      // --- end robust response handling ---
+
       console.debug('[GRB] response:', data);
 
       const meta = data?.meta ?? {};

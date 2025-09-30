@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>Digitool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Fonts & Leaflet -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-measure@3.1.0/dist/leaflet-measure.css">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div id="mainContainer">
+    <!-- Map on the left -->
+    <div id="mapPane">
+
+      <div id="map"></div>
+
+      <!-- Version box -->
+      <div id="version-box"></div>
+
+      <div id="digisky-logo">
+        <img src="digisky_logo.png" alt="Digisky Logo">
+      </div>
+
+      <div id="mapTools">
+
+        <div id="toolsToggle">▼ Tools</div>
+        <div id="toolsContent">
+
+          <!-- Address Search Bar -->
+          <div class="toolBox" id="searchBox">
+            <input id="addrInput" type="text" placeholder="Search Address or Place" autocomplete="off" />
+            <div id="addrResults" class="dropdown"></div>
+          </div>
+
+          <!-- Base Layer Control -->
+          <div class="toolBox" id="layerBox"></div>
+
+          <!-- ICAO Karte -->
+          <div class="toolBox overlayControl">
+            <div class="overlayRow">
+              <input type="checkbox" id="icaoToggle">
+              <label for="icaoToggle">ICAO Karte</label>
+            </div>
+            <input type="range" id="icaoOpacity" min="0" max="1" step="0.01" value="1" title="ICAO Karte Opacity">
+          </div>
+
+          <!-- Luftfahrthindernisse -->
+          <div class="toolBox overlayControl">
+            <div class="overlayRow">
+              <input type="checkbox" id="obstacleToggle">
+              <label for="obstacleToggle">Luftfahrthindernisse</label>
+            </div>
+            <input type="range" id="obstacleOpacity" min="0" max="1" step="0.01" value="0.4" title="Obstacle Opacity">
+          </div>
+
+          <!-- Einschränkungen für Drohnen -->
+          <div class="toolBox overlayControl">
+            <div class="overlayRow">
+              <input type="checkbox" id="droneToggle" checked>
+              <label for="droneToggle">Einschränkungen für Drohnen</label>
+            </div>
+            <input type="range" id="droneOpacity" min="0" max="1" step="0.01" value="0.4" title="Drone Restriction Opacity">
+          </div>
+
+          <!-- SORA Bodenrisiko -->
+          <div class="toolBox overlayControl">
+            <div class="overlayRow">
+              <input type="checkbox" id="soraToggle" checked>
+              <label for="soraToggle">SORA Bodenrisiko</label>
+            </div>
+            <input type="range" id="soraOpacity" min="0" max="1" step="0.01" value="0.4" title="SORA Risk Opacity">
+          </div>
+
+          <!-- Spitallandeplätze -->
+          <div class="toolBox overlayControl">
+            <div class="overlayRow">
+              <input type="checkbox" id="spitalToggle">
+              <label for="spitalToggle">Spitallandeplätze</label>
+            </div>
+          </div>
+
+          <!-- Gebirgslandeplätze -->
+          <div class="toolBox overlayControl">
+            <div class="overlayRow">
+              <input type="checkbox" id="gebirgsToggle">
+              <label for="gebirgsToggle">Gebirgslandeplätze</label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Drone input pane on the right -->
+    <div id="inputPane">
+      <div id="inputHeader">Flight Details</div>
+      <div id="inputContent">
+        <!-- will be rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- JS includes -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet-measure@3.1.0/dist/leaflet-measure.js"></script>
+  <<script src="./libs/togeojson.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tokml@0.4.0/tokml.js"></script>
+  <script type="module" src="map.js"></script>
+  <script type="module" src="ui.js"></script>
+  <script type="module">import { renderDroneInputUI } from './DroneInputUI.js';renderDroneInputUI();</script>
+
+  <!-- Your modular KML JS -->
+  <script type="module" src="./modules/kml/kml.js"></script>
+
+  <!-- JavaScript to load the version -->
+  <script src="./version.js"></script>
+  <script>
+  const el = document.getElementById('version-box');
+  if (el) {
+    const v = window.APP_VERSION ? `V.${window.APP_VERSION}` : 'dev';
+    const c = window.APP_COPYRIGHT ? ` • ${window.APP_COPYRIGHT}` : '';
+    el.textContent = `${v}${c}`;
+  }
+  </script>
+
+</body>
+
+</html>

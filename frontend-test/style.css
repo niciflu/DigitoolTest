@@ -1,0 +1,384 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* prevents page scroll */
+}
+
+
+/* GLOBAL RESET */
+* {
+  box-sizing: border-box;
+}
+
+/* FULLSCREEN MAP */
+#map {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* MAIN TOOL PANEL */
+#mapTools {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 1000;
+  width: 270px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  overflow: hidden;
+  font-family: sans-serif;
+}
+
+/* COLLAPSIBLE TOGGLE */
+#toolsToggle {
+  text-align: center;
+  padding: 6px 0;
+  font-size: 13px;
+  background: #eee;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid #ccc;
+}
+
+#toolsContent {
+  transition: max-height 0.3s ease-out;
+  overflow: hidden;
+  padding: 8px;
+}
+
+#mapTools.collapsed #toolsContent {
+  max-height: 0;
+  padding: 0;
+}
+
+/* TOOLBOX CARD */
+.toolBox {
+  position: relative;
+  margin: 8px 0;
+  padding: 10px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.digisky-logo {
+  margin: 0 0 10px 10px;   /* position padding from the corner */
+  z-index: 1001;           /* > map (1) and > tools (1000) */
+}
+
+
+/* Results panel */
+.resultsPanel {
+  width: 100%;
+  margin-top: 12px;
+  background: #ffffff;
+  color: #0b1b3a;            /* dark text for contrast */
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  padding: 12px;
+  z-index: 1000;
+}
+
+.resultsPanel h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0b1b3a;
+}
+
+.metricRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #eef1f6;
+}
+.metricRow:last-child { border-bottom: 0; }
+
+.metricLabel {
+  font-size: 13px;
+  color: #3a509f;            /* ties to sidebar color */
+  font-weight: 600;
+}
+.metricValue {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Small colored chips to echo layer colors */
+.chip { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; }
+/* Clickable chips + hidden state */
+.chip { cursor: pointer; border: 1px solid rgba(0,0,0,0.08); }
+.chip.off { opacity: 0.25; outline: 2px dashed rgba(0,0,0,0.15); }
+.chip-scv { background:#DDB027; }
+.chip-grb { background:#DD3927; }
+.chip-sd  { background:#00009B; }
+.chip-hd  { background:#00009B; } /* Detection Height */
+.chip-aa  { background:#FF0000; }
+.chip-ah  { background:#0000FF; } /* Assemblies Horizon */
+
+/* Optional: better inputs on dark sidebar */
+#inputPane input, #inputPane select {
+  background: #fff;
+  color: #0b1b3a;
+  border: 1px solid #d6dbe6;
+  border-radius: 6px;
+  padding: 6px 8px;
+  width: 100%;
+}
+#inputContent label { color: #ffffff; } /* keep your existing white labels */
+
+
+/* SEARCH TOOL */
+#searchBox {
+  width: 100%;
+}
+
+#searchBox input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+#addrResults {
+  display: none;
+  margin-top: 6px;
+  max-height: 240px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+  z-index: 2;
+}
+
+#addrResults .result {
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+#addrResults .result:hover {
+  background: #f2f2f2;
+}
+
+/* LAYERBOX LEAFLET PATCHES */
+#layerBox .leaflet-control {
+  width: 100%;
+}
+
+#layerBox .leaflet-control-layers {
+  position: static;
+  float: none;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+#layerBox .leaflet-control-layers-expanded {
+  width: 100%;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+#layerBox .leaflet-control-layers-list {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+#layerBox .leaflet-control-layers-base label,
+#layerBox .leaflet-control-layers-overlays label {
+  display: block;
+  padding: 6px 8px;
+}
+
+#layerBox .leaflet-control-layers-separator {
+  display: none;
+}
+
+/* MAIN LAYOUT SPLIT */
+#mainContainer {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* LEFT PANE: MAP + tools */
+#mapPane {
+  flex: 1 1 auto;
+  min-width: 0;
+  position: relative;
+}
+
+/* VERSION BOX */
+#version-box {
+  position: absolute;
+  bottom: 20px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: sans-serif;
+  z-index: 9999;
+}
+
+/* RIGHT PANE: INPUT */
+#inputPane {
+  color: rgb(247, 247, 247);
+  flex: 0 0 270px;
+  background: rgb(58, 80, 159);
+  padding: 16px;
+  font-family: 'Montserrat', sans-serif;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+#inputContent label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+#inputContent button {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+  padding: 10px;
+  background-color: #004080;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+#inputContent button:hover {
+  background-color: #0059b3;
+}
+
+#inputContent select {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+}
+
+/* Optional: Add more breathing room above grouped sections (if any) */
+.sectionTitle {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #006699;
+}
+
+#inputHeader {
+  color: rgb(247, 247, 247);
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+#digisky-logo {
+  position: absolute;
+  bottom: 60px;
+  right: 10px;
+  z-index: 9999; /* above the map */
+}
+
+#digisky-logo img {
+  height: 80px; /* adjust size */
+  width: auto;
+  opacity: 0.9;
+}
+
+#digisky-logo img:hover {
+  opacity: 1;
+}
+
+/* Responsive fallback (for later) */
+@media (max-width: 768px) {
+  #mainContainer {
+    flex-direction: column;
+  }
+
+  #mapPane {
+    flex: 1 1 60%;
+  }
+
+  #inputPane {
+    flex: 1 1 40%;
+    max-height: 40vh;
+  }
+}
+
+/* ===== LEAFLET MEASURE CONTROL STYLING ===== */
+
+/* Position: place it just under the Draw control */
+.leaflet-top.leaflet-right .leaflet-control-measure {
+  margin-top: 50px; /* Adjust so it sits below Draw control */
+  margin-right: 10px;
+}
+
+/* Expanded panel styling */
+.leaflet-control-measure .leaflet-control-measure-interaction {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  padding: 10px;
+}
+
+/* Results inside measure control */
+.leaflet-control-measure .results {
+  background: #ffffff;
+  color: #0b1b3a;  /* same as .resultsPanel text */
+  border-radius: 8px;
+  border: 1px solid #eef1f6;
+  padding: 8px;
+  margin-top: 6px;
+}
+
+/* Form elements inside */
+.leaflet-control-measure input,
+.leaflet-control-measure button,
+.leaflet-control-measure select {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+}
+.leaflet-control-measure button {
+  background-color: #004080;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.leaflet-control-measure button:hover {
+  background-color: #0059b3;
+}
+
+/* Z-index so it appears above overlays */
+.leaflet-control-measure {
+  z-index: 1001;
+}
